@@ -1,0 +1,509 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Accessibility: Stockton</title>
+  <meta name="description" content="Stockton">
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.0/css/bootstrap-slider.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+  integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+  crossorigin=""/>
+  <link rel="stylesheet" href="css/styles.css" type="text/css">
+</head>
+
+<body>
+  <!-- HEADER -->
+  <nav id='headerNav' class="navbar navbar-light" style='background-color: rgba(75, 175, 119,
+  1); color:"#ffffff"'>
+    <h3><a style='font-size: 30px' id=header class="navbar-brand" href='index.html'>Accessibility: Stockton</a></h3>
+  </nav>
+  <div id="body">
+    <div class='container-fluid'>
+      <div id='weightMap' class="row">
+        <div class="col-md-5" style="padding:20px; width:100%; height: 550px; overflow: scroll;">
+          <h4><b>Accessibility Weighting</b><br><br></h4>
+          <div class="row">
+            <div class="col-md-4" style="padding:0px; width:100%;">
+              <b>Goods & Services</b>
+            </div>
+            <div class="col-md-4" style="padding:0px; width:100%;" data-toggle="tooltip" data-placement="top" title="Value of the destination type. 10 is ten times as valuable as 1">
+              <b>Value</b>
+            </div>
+            <div class="col-md-4" style="padding:0px; width:100%;" data-toggle="tooltip" data-placement="top" title="Number of each type you would like in your neighborhood">
+              <b>Density</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              ATM
+            </div>
+            <div class="col-md-4">
+              <input id="atmVal" type='number' class="form-control bfh-number" name="atmVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="atmMVal" type='number' class="form-control bfh-number" name="atmMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Bakery
+            </div>
+            <div class="col-md-4">
+              <input id="bakeryVal" type='number' class="form-control bfh-number" name="bakeryVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="bakeryMVal" type='number' class="form-control bfh-number" name="bakeryMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Bank
+            </div>
+            <div class="col-md-4">
+              <input id="bankVal" type='number' class="form-control bfh-number" name="bankVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="bankMVal" type='number' class="form-control bfh-number" name="bankMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Beauty Salon
+            </div>
+            <div class="col-md-4">
+              <input id="beautySalonVal" type='number' class="form-control bfh-number" name="beautySalonVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="beautySalonMVal" type='number' class="form-control bfh-number" name="beautySalonMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Book Store
+            </div>
+            <div class="col-md-4">
+              <input id="bookStoreVal" type='number' class="form-control bfh-number" name="bookStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="bookStoreMVal" type='number' class="form-control bfh-number" name="bookStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Bus Station
+            </div>
+            <div class="col-md-4">
+              <input id="busStationVal" type='number' class="form-control bfh-number" name="busStationVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="busStationMVal" type='number' class="form-control bfh-number" name="busStationMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Cafe
+            </div>
+            <div class="col-md-4">
+              <input id="cafeVal" type='number' class="form-control bfh-number" name="cafeVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="cafeMVal" type='number' class="form-control bfh-number" name="cafeMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Clothing Store
+            </div>
+            <div class="col-md-4">
+              <input id="clothingStoreVal" type='number' class="form-control bfh-number" name="clothingStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="clothingStoreMVal" type='number' class="form-control bfh-number" name="clothingStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Convenience Store
+            </div>
+            <div class="col-md-4">
+              <input id="convenienceStoreVal" type='number' class="form-control bfh-number" name="convenienceStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="convenienceStoreMVal" type='number' class="form-control bfh-number" name="convenienceStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Dentist
+            </div>
+            <div class="col-md-4">
+              <input id="dentistVal" type='number' class="form-control bfh-number" name="dentistVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="dentistMVal" type='number' class="form-control bfh-number" name="dentistMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Department Store
+            </div>
+            <div class="col-md-4">
+              <input id="departmentStoreVal" type='number' class="form-control bfh-number" name="departmentStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="departmentStoreMVal" type='number' class="form-control bfh-number" name="departmentStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Doctor
+            </div>
+            <div class="col-md-4">
+              <input id="doctorVal" type='number' class="form-control bfh-number" name="doctorVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="doctorMVal" type='number' class="form-control bfh-number" name="doctorMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Electronics Store
+            </div>
+            <div class="col-md-4">
+              <input id="electronicsVal" type='number' class="form-control bfh-number" name="electronicsVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="electronicsMVal" type='number' class="form-control bfh-number" name="electronicsMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Florist
+            </div>
+            <div class="col-md-4">
+              <input id="floristVal" type='number' class="form-control bfh-number" name="floristVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="floristMVal" type='number' class="form-control bfh-number" name="floristMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Furniture Store
+            </div>
+            <div class="col-md-4">
+              <input id="furnitureStoreVal" type='number' class="form-control bfh-number" name="furnitureStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="furnitureStoreMVal" type='number' class="form-control bfh-number" name="furnitureStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Gym
+            </div>
+            <div class="col-md-4">
+              <input id="gymVal" type='number' class="form-control bfh-number" name="gymVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="gymMVal" type='number' class="form-control bfh-number" name="gymMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Hair Care
+            </div>
+            <div class="col-md-4">
+              <input id="hairCareVal" type='number' class="form-control bfh-number" name="hairCareVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="hairCareMVal" type='number' class="form-control bfh-number" name="hairCareMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Hardware Store
+            </div>
+            <div class="col-md-4">
+              <input id="hardwareStoreVal" type='number' class="form-control bfh-number" name="hardwareStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="hardwareStoreMVal" type='number' class="form-control bfh-number" name="hardwareStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Home Goods Store
+            </div>
+            <div class="col-md-4">
+              <input id="homeStoreVal" type='number' class="form-control bfh-number" name="homeStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="homeStoreMVal" type='number' class="form-control bfh-number" name="homeStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Hospital
+            </div>
+            <div class="col-md-4">
+              <input id="hospitalVal" type='number' class="form-control bfh-number" name="hospitalVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="hospitalMVal" type='number' class="form-control bfh-number" name="hospitalMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Laundry
+            </div>
+            <div class="col-md-4">
+              <input id="laundryVal" type='number' class="form-control bfh-number" name="laundryVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="laundryMVal" type='number' class="form-control bfh-number" name="laundryMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Library
+            </div>
+            <div class="col-md-4">
+              <input id="libraryVal" type='number' class="form-control bfh-number" name="libraryVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="libraryMVal" type='number' class="form-control bfh-number" name="libraryMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Liquor Store
+            </div>
+            <div class="col-md-4">
+              <input id="liquorStoreVal" type='number' class="form-control bfh-number" name="liquorStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="liquorStoreMVal" type='number' class="form-control bfh-number" name="liquorStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Takeout Restaurants
+            </div>
+            <div class="col-md-4">
+              <input id="takeoutVal" type='number' class="form-control bfh-number" name="takeoutVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="takeoutMVal" type='number' class="form-control bfh-number" name="takeoutMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Park
+            </div>
+            <div class="col-md-4">
+              <input id="parkVal" type='number' class="form-control bfh-number" name="parkVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="parkMVal" type='number' class="form-control bfh-number" name="parkMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Pet Store
+            </div>
+            <div class="col-md-4">
+              <input id="petStoreVal" type='number' class="form-control bfh-number" name="petStoreVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="petStoreMVal" type='number' class="form-control bfh-number" name="petStoreMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Pharmacy
+            </div>
+            <div class="col-md-4">
+              <input id="pharmaVal" type='number' class="form-control bfh-number" name="pharmaVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="pharmaMVal" type='number' class="form-control bfh-number" name="pharmaMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Restaurant
+            </div>
+            <div class="col-md-4">
+              <input id="restaurantVal" type='number' class="form-control bfh-number" name="restaurantVal" data-min=0 data-max=10 min=0 max=10 value=6 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="restaurantMVal" type='number' class="form-control bfh-number" name="restaurantMVal" data-min=1 data-max=10 min=1 max=10 value=10 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Shoe Store
+            </div>
+            <div class="col-md-4">
+              <input id="shoeStoreVal" type='number' class="form-control bfh-number" name="shoeStoreVal" data-min=0 data-max=10 min=0 max=10 value=6 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="shoeStoreMVal" type='number' class="form-control bfh-number" name="shoeStoreMVal" data-min=1 data-max=10 min=1 max=10 value=10 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Shopping Mall
+            </div>
+            <div class="col-md-4">
+              <input id="shoppingMallVal" type='number' class="form-control bfh-number" name="shoppingMallVal" data-min=0 data-max=10 min=0 max=10 value=6 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="shoppingMallMVal" type='number' class="form-control bfh-number" name="shoppingMallMVal" data-min=1 data-max=10 min=1 max=10 value=10 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Store
+            </div>
+            <div class="col-md-4">
+              <input id="storeVal" type='number' class="form-control bfh-number" name="storeVal" data-min=0 data-max=10 min=0 max=10 value=6 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="storeMVal" type='number' class="form-control bfh-number" name="storeMVal" data-min=1 data-max=10 min=1 max=10 value=10 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Supermarket
+            </div>
+            <div class="col-md-4">
+              <input id="supermarketVal" type='number' class="form-control bfh-number" name="supermarketVal" data-min=0 data-max=10 min=0 max=10 value=4 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="supermarketMVal" type='number' class="form-control bfh-number" name="supermarketMVal" data-min=1 data-max=10 min=1 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Train Station
+            </div>
+            <div class="col-md-4">
+              <input id="trainStationVal" type='number' class="form-control bfh-number" name="trainStationVal" data-min=0 data-max=10 min=0 max=10 value=6 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="trainStationMVal" type='number' class="form-control bfh-number" name="trainStationMVal" data-min=1 data-max=10 min=1 max=10 value=10 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-4">
+              <b>Transit Modes</b>
+            </div>
+            <div class="col-md-4" style="padding:0px; width:100%;" data-toggle="tooltip" data-placement="top" title="Value of the travel mode. 10 is ten times as valuable as 1">
+              <b>Value</b>
+            </div>
+            <div class="col-md-4" style="padding:0px; width:100%;" data-toggle="tooltip" data-placement="top" title="How long you'd be reasonably willing to travel in minutes">
+              <b>Reasonable Length</b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Walk
+            </div>
+            <div class="col-md-4">
+              <input id="walkVal" type='number' class="form-control bfh-number" name="walkVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="walkMVal" type='number' class="form-control bfh-number" name="walkMVal" data-min=0 data-max=30 min=0 max=30 value=11 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Bike
+            </div>
+            <div class="col-md-4">
+              <input id="bikeVal" type='number' class="form-control bfh-number" name="bikeVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="bikeMVal" type='number' class="form-control bfh-number" name="bikeMVal" data-min=1 data-max=10 min=1 max=10 value=12 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Transit
+            </div>
+            <div class="col-md-4">
+              <input id="transitVal" type='number' class="form-control bfh-number" name="transitVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="transitMVal" type='number' class="form-control bfh-number" name="transitMVal" data-min=1 data-max=10 min=1 max=10 value=16 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              Drive
+            </div>
+            <div class="col-md-4">
+              <input id="driveVal" type='number' class="form-control bfh-number" name="driveVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
+            </div>
+            <div class="col-md-4">
+              <input id="driveMVal" type='number' class="form-control bfh-number" name="driveMVal" data-min=1 data-max=10 min=1 max=10 value=16 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-7" style="padding:0;width:100%">
+          <div id='my-map'></div>
+        </div>
+      </div>
+      <div class='row' >
+        <div class="col-xs-6 col-md-12" style="padding:0; width:100%;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="creditsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">About this project</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          City Systems bio, credits to us + to our partners</a>.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script
+  src="//code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+    integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+    crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.13.0/d3.js"></script>
+  <script src='js/parcels.js'></script>
+  <script src='js/distances.js'></script>
+  <script src='js/amenities.js'></script>
+  <script src='js/blockGroups.js'></script>
+  <script src="js/scripts.js"></script>
+</body>
+
+</html>
