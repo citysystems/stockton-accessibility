@@ -1137,7 +1137,7 @@ function onEachFeature(feature, layer) {
   };
   layer.feature.properties.score = score;
   if (layer.feature.properties && layer.feature.properties.score) {
-      layer.bindPopup("Accessibility Score: " + layer.feature.properties.score + ", Parcel: " + layer.feature.properties.ID);
+      layer.bindPopup("Accessibility Score: " + layer.feature.properties.score);
   };
   layer.setStyle({
       fillColor: getColor(layer.feature.properties.score),
