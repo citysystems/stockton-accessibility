@@ -66,15 +66,18 @@ minScore = 0;
 function onEachFeature(feature, layer) {
   //Get buttons
   var absoluteAmenW = [$("#atmVal"),$("#bakeryVal"),$("#bankVal"), $("#beautySalonVal"), $("#bookStoreVal"),
-    $("#busStationVal"),$("#cafeVal"), $("#clothingStoreVal"), $("#convenienceStoreVal"), $("#dentistVal"), $("#departmentStoreVal"), $("#doctorVal"), $("#electronicsVal"),$("#floristVal"),
-      $("#furnitureStoreVal"),$("#gymVal"),$("#hairCareVal"), $("#hardwareStoreVal"), $("#homeStoreVal"), $("#hospitalVal"), $("#laundryVal"), $("#libraryVal"), $("#liquorStoreVal"),$("#takeoutVal"),
-      $("#parkVal"),$("#petStoreVal"), $("#pharmaVal"),
-    $("#restaurantVal"), $("#shoeStoreVal"), $("#shoppingMallVal"), $("#storeVal"),$("#supermarketVal"), $("#trainStationVal")];
+    $("#busStationVal"),$("#cafeVal"), $("#clothingStoreVal"), $("#convenienceStoreVal"),
+    $("#dentistVal"), $("#departmentStoreVal"), $("#doctorVal"), $("#electronicsVal"),$("#floristVal"),
+      $("#furnitureStoreVal"),$("#gymVal"),$("#hairCareVal"), $("#hardwareStoreVal"),
+      $("#homeStoreVal"), $("#hospitalVal"), $("#laundryVal"), $("#libraryVal"), $("#liquorStoreVal"),
+      $("#takeoutVal"),$("#parkVal"),$("#petStoreVal"), $("#pharmaVal"),
+    $("#restaurantVal"),$("#schoolVal"), $("#shoeStoreVal"), $("#shoppingMallVal"),
+    $("#storeVal"),$("#supermarketVal"), $("#trainStationVal")];
     var marginalAmenW = [$("#atmMVal"),$("#bakeryMVal"),$("#bankMVal"), $("#beautySalonMVal"), $("#bookStoreMVal"),
       $("#busStationMVal"),$("#cafeMVal"), $("#clothingStoreMVal"), $("#convenienceStoreMVal"), $("#dentistMVal"), $("#departmentStoreMVal"), $("#doctorMVal"), $("#electronicsMVal"),$("#floristMVal"),
         $("#furnitureStoreMVal"),$("#gymMVal"),$("#hairCareMVal"), $("#hardwareStoreMVal"), $("#homeStoreMVal"), $("#hospitalMVal"), $("#laundryMVal"), $("#libraryMVal"), $("#liquorStoreMVal"),$("#takeoutMVal"),
         $("#parkMVal"),$("#petStoreMVal"), $("#pharmaMVal"),
-      $("#restaurantMVal"), $("#shoeStoreMVal"), $("#shoppingMallMVal"), $("#storeMVal"),$("#supermarketMVal"), $("#trainStationMVal")];
+      $("#restaurantMVal"),$("#schoolMVal"), $("#shoeStoreMVal"), $("#shoppingMallMVal"), $("#storeMVal"),$("#supermarketMVal"), $("#trainStationMVal")];
   var absoluteTransitW = [$("#walkVal"), $("#bikeVal"), $("#transitVal"), $("#driveVal")];
   var marginalTransitW = [$("#walkMVal"), $("#bikeMVal"), $("#transitMVal"), $("#driveMVal")];
   for (var i = 0; i < absoluteAmenW.length; i++) {
@@ -127,7 +130,7 @@ function onEachFeature(feature, layer) {
       parseInt($("#furnitureStoreVal").val()),parseInt($("#gymVal").val()),parseInt($("#hairCareVal").val()), parseInt($("#hardwareStoreVal").val()), parseInt($("#homeStoreVal").val()), parseInt($("#hospitalVal").val()), parseInt($("#laundryVal").val()),
       parseInt($("#libraryVal").val()), parseInt($("#liquorStoreVal").val()),parseInt($("#takeoutVal").val()),
       parseInt($("#parkVal").val()),parseInt($("#petStoreVal").val()), parseInt($("#pharmaVal").val()),
-    parseInt($("#restaurantVal").val()), parseInt($("#shoeStoreVal").val()), parseInt($("#shoppingMallVal").val()), parseInt($("#storeVal").val()),parseInt($("#supermarketVal").val()), parseInt($("#trainStationVal").val())];
+    parseInt($("#restaurantVal").val()), parseInt($("#schoolVal").val()), parseInt($("#shoeStoreVal").val()), parseInt($("#shoppingMallVal").val()), parseInt($("#storeVal").val()),parseInt($("#supermarketVal").val()), parseInt($("#trainStationVal").val())];
   //marginal amenity calc: 1 - (1/(MarginalVal))
   var marginalAmenW = [(1-(1/$("#atmMVal").val())),(1-(1/$("#bakeryMVal").val())),(1-(1/$("#bankMVal").val())), (1-(1/$("#beautySalonMVal").val())), (1-(1/$("#bookStoreMVal").val())),
     (1-(1/$("#busStationMVal").val())),(1-(1/$("#cafeMVal").val())), (1-(1/$("#clothingStoreMVal").val())), (1-(1/$("#convenienceStoreMVal").val())), (1-(1/$("#dentistMVal").val())),
@@ -135,7 +138,7 @@ function onEachFeature(feature, layer) {
     (1-(1/$("#gymMVal").val())),(1-(1/$("#hairCareMVal").val())), (1-(1/$("#hardwareStoreMVal").val())), (1-(1/$("#homeStoreMVal").val())),
     (1-(1/$("#hospitalMVal").val())), (1-(1/$("#laundryMVal").val())), (1-(1/$("#libraryMVal").val())), (1-(1/$("#liquorStoreMVal").val())),(1-(1/$("#takeoutMVal").val())),
       (1-(1/$("#parkMVal").val())),(1-(1/$("#petStoreMVal").val())), (1-(1/$("#pharmaMVal").val())),
-    (1-(1/$("#restaurantMVal").val())), (1-(1/$("#shoeStoreMVal").val())), (1-(1/$("#shoppingMallMVal").val())), (1-(1/$("#storeMVal").val())),(1-(1/$("#supermarketMVal").val())),
+    (1-(1/$("#restaurantMVal").val())), (1-(1/$("#schoolMVal").val())), (1-(1/$("#shoeStoreMVal").val())), (1-(1/$("#shoppingMallMVal").val())), (1-(1/$("#storeMVal").val())),(1-(1/$("#supermarketMVal").val())),
     (1-(1/$("#trainStationMVal").val()))];
   var absoluteTransitW = [parseInt($("#walkVal").val()), parseInt($("#bikeVal").val()), parseInt($("#transitVal").val()), parseInt($("#driveVal").val())];
   //marginal transit calc: -ln0.1/t(minutes)
@@ -298,98 +301,839 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[4],2)) * absoluteAmenW[4];
       score += aggScore;
+
+      //ADDING BUS STATIONS 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bus_station_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bus_station_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_bus_station_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[5],0)) * absoluteAmenW[5]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bus_station_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bus_station_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_bus_station_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[5],1)) * absoluteAmenW[5]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bus_station_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bus_station_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_bus_station_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[5],2)) * absoluteAmenW[5];
+      score += aggScore;
+
+
+      //ADDING CAFES 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_cafe_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[6],0)) * absoluteAmenW[6]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_cafe_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[6],1)) * absoluteAmenW[6]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_cafe_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[6],2)) * absoluteAmenW[6];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_cafe_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[6],3)) * absoluteAmenW[6];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_cafe_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[6],4)) * absoluteAmenW[6];
+      score += aggScore;
+
+      //ADDING CLOTHING STORES 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_clothing_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[7],0)) * absoluteAmenW[7]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_clothing_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[7],1)) * absoluteAmenW[7]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_clothing_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[7],2)) * absoluteAmenW[7];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_clothing_store_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[7],3)) * absoluteAmenW[7];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_clothing_store_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[7],4)) * absoluteAmenW[7];
+      score += aggScore;
+
+      //ADDING CONVENIENCE STORES 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_convenience_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[8],0)) * absoluteAmenW[8]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_convenience_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[8],1)) * absoluteAmenW[8]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_convenience_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[8],2)) * absoluteAmenW[8];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_convenience_store_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[8],3)) * absoluteAmenW[8];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_convenience_store_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[8],4)) * absoluteAmenW[8];
+      score += aggScore;
+
+      //ADDING DENTISTS 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_dentist_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_dentist_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_dentist_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[9],0)) * absoluteAmenW[9]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_dentist_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_dentist_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_dentist_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[9],1)) * absoluteAmenW[9]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_dentist_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_dentist_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_dentist_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[9],2)) * absoluteAmenW[9];
+      score += aggScore;
+
+      //ADDING DEPARTMENT STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_department_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_department_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_department_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[10],0)) * absoluteAmenW[10]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_department_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_department_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_department_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[10],1)) * absoluteAmenW[10]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_department_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_department_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_department_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[10],2)) * absoluteAmenW[10];
+      score += aggScore;
+
+      //ADDING DOCTORS 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_doctor_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_doctor_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_doctor_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[11],0)) * absoluteAmenW[11]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_doctor_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_doctor_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_doctor_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[11],1)) * absoluteAmenW[11]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_doctor_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_doctor_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_doctor_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[11],2)) * absoluteAmenW[11];
+      score += aggScore;
+
+      //ADDING ELECTRONICS STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_electronics_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_electronics_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_electronics_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[12],0)) * absoluteAmenW[12]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_electronics_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_electronics_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_electronics_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[12],1)) * absoluteAmenW[12]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_electronics_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_electronics_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_electronics_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[12],2)) * absoluteAmenW[12];
+      score += aggScore;
+
+      //ADDING Florist 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_florist_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_florist_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_florist_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[13],0)) * absoluteAmenW[13]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_florist_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_florist_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_florist_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[13],1)) * absoluteAmenW[13]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_florist_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_florist_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_florist_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[13],2)) * absoluteAmenW[13];
+      score += aggScore;
+
+      //ADDING FURNITURE STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_furniture_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_furniture_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_furniture_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[14],0)) * absoluteAmenW[14]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_furniture_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_furniture_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_furniture_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[14],1)) * absoluteAmenW[14]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_furniture_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_furniture_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_furniture_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[14],2)) * absoluteAmenW[14];
+      score += aggScore;
+
+      //ADDING GYM 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_gym_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_gym_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_gym_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[15],0)) * absoluteAmenW[15]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_gym_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_gym_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_gym_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[15],1)) * absoluteAmenW[15]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_gym_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_gym_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_gym_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[15],2)) * absoluteAmenW[15];
+      score += aggScore;
+
+      //ADDING HAIR CARE STORES 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hair_care_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[16],0)) * absoluteAmenW[16]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hair_care_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[16],1)) * absoluteAmenW[16]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hair_care_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[16],2)) * absoluteAmenW[16];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hair_care_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[16],3)) * absoluteAmenW[16];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hair_care_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[16],4)) * absoluteAmenW[16];
+      score += aggScore;
+
+      //ADDING HARDWARe STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hardware_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hardware_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hardware_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[17],0)) * absoluteAmenW[17]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hardware_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hardware_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hardware_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[17],1)) * absoluteAmenW[17]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hardware_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hardware_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hardware_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[17],2)) * absoluteAmenW[17];
+      score += aggScore;
+
+      //ADDING HOME GOODS STORES 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_home_goods_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[18],0)) * absoluteAmenW[18]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_home_goods_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[18],1)) * absoluteAmenW[18]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_home_goods_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[18],2)) * absoluteAmenW[18];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_home_goods_store_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[18],3)) * absoluteAmenW[18];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_home_goods_store_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[18],4)) * absoluteAmenW[18];
+      score += aggScore;
+
+
+      //ADDING HOSPITALS 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hospital_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hospital_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hospital_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hospital_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[19],0)) * absoluteAmenW[19]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hospital_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hospital_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hospital_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hospital_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[19],1)) * absoluteAmenW[19]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hospital_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hospital_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hospital_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_hospital_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[19],2)) * absoluteAmenW[19];
+      score += aggScore;
+
+      //ADDING LAUNDRY 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_laundry_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_laundry_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_laundry_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[20],0)) * absoluteAmenW[20]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_laundry_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_laundry_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_laundry_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[20],1)) * absoluteAmenW[20]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_laundry_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_laundry_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_laundry_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[20],2)) * absoluteAmenW[20];
+      score += aggScore;
+
+      //ADDING LIBRARY 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_library_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_library_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_library_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[21],0)) * absoluteAmenW[21]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_library_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_library_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_library_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[21],1)) * absoluteAmenW[21]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_library_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_library_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_library_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[21],2)) * absoluteAmenW[21];
+      score += aggScore;
+
+      //ADDING LIQUOR STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_liquor_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_liquor_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_liquor_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[22],0)) * absoluteAmenW[22]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_liquor_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_liquor_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_liquor_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[22],1)) * absoluteAmenW[22]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_liquor_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_liquor_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_liquor_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[22],2)) * absoluteAmenW[22];
+      score += aggScore;
+
+      //ADDING TAKEOUT 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_meal_takeaway_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[23],0)) * absoluteAmenW[23]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_meal_takeaway_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[23],1)) * absoluteAmenW[23]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_meal_takeaway_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[23],2)) * absoluteAmenW[23];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_meal_takeaway_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[23],3)) * absoluteAmenW[23];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_meal_takeaway_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[23],4)) * absoluteAmenW[23];
+      score += aggScore;
+
+      //ADDING PARK 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_park_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[24],0)) * absoluteAmenW[24]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_park_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[24],1)) * absoluteAmenW[24]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_park_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[24],2)) * absoluteAmenW[24];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_park_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[24],3)) * absoluteAmenW[24];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_park_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[24],4)) * absoluteAmenW[24];
+      score += aggScore;
+
+      //ADDING PET STORES 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pet_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pet_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pet_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[25],0)) * absoluteAmenW[25]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pet_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pet_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pet_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[25],1)) * absoluteAmenW[25]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pet_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pet_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pet_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[25],2)) * absoluteAmenW[25];
+      score += aggScore;
+
+      //ADDING PHARMACY 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pharmacy_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pharmacy_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pharmacy_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[26],0)) * absoluteAmenW[26]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pharmacy_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pharmacy_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pharmacy_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[26],1)) * absoluteAmenW[26]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pharmacy_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pharmacy_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_pharmacy_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[26],2)) * absoluteAmenW[26];
+      score += aggScore;
+
+      //ADDING RESTAURANT 10
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],0)) * absoluteAmenW[27]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],1)) * absoluteAmenW[27]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],2)) * absoluteAmenW[27];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],3)) * absoluteAmenW[27];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],4)) * absoluteAmenW[27];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],5)) * absoluteAmenW[27]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],6)) * absoluteAmenW[27]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],7)) * absoluteAmenW[27];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],8)) * absoluteAmenW[27];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_restaurant_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[27],9)) * absoluteAmenW[27];
+      score += aggScore;
+
+      //ADDING SCHOOLS 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_school_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_school_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_school_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[28],0)) * absoluteAmenW[28]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_school_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_school_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_school_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[28],1)) * absoluteAmenW[28]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_school_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_school_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_school_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[28],2)) * absoluteAmenW[28];
+      score += aggScore;
+
+      //ADDING SHOE STORE 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shoe_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shoe_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shoe_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[29],0)) * absoluteAmenW[29]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shoe_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shoe_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shoe_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[29],1)) * absoluteAmenW[29]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shoe_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shoe_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shoe_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[29],2)) * absoluteAmenW[29];
+      score += aggScore;
+
+      //ADDING SHOPPING MALL 3
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shopping_mall_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shopping_mall_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shopping_mall_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[30],0)) * absoluteAmenW[30]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shopping_mall_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shopping_mall_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shopping_mall_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[30],1)) * absoluteAmenW[30]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shopping_mall_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shopping_mall_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_shopping_mall_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[30],2)) * absoluteAmenW[30];
+      score += aggScore;
+
+      //ADDING STORE 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_store_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[31],0)) * absoluteAmenW[31]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_store_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[31],1)) * absoluteAmenW[31]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_store_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[31],2)) * absoluteAmenW[31];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_store_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[31],3)) * absoluteAmenW[31];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_store_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[31],4)) * absoluteAmenW[31];
+      score += aggScore;
+
+      //ADDING SUPERMARKET 5
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_supermarket_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[32],0)) * absoluteAmenW[32]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_2)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_2)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_2)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_supermarket_2)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[32],1)) * absoluteAmenW[32]
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_3)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_3)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_3)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_supermarket_3)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[32],2)) * absoluteAmenW[32];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_4)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_4)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_4)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_supermarket_4)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[32],3)) * absoluteAmenW[32];
+      score += aggScore;
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_5)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_5)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_5)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_supermarket_5)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[32],4)) * absoluteAmenW[32];
+      score += aggScore;
+
+      //ADDING TRAIN STATION 1
+      walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_train_station_1)) * absoluteTransitW[0];
+      bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_train_station_1)) * absoluteTransitW[1];
+      transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_train_station_1)) * absoluteTransitW[2];
+      driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_train_station_1)) * absoluteTransitW[3];
+      aggScore = walkScore + bikeScore + transitScore + driveScore;
+      aggScore = (aggScore * Math.pow(marginalAmenW[33],0)) * absoluteAmenW[33]
+      score += aggScore;
+
       console.log(score);
     };
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //     if (distances[i].type == 'restaurant') {
-  //       walkScore =  Math.exp(marginalTransitW[0]*distances[i]["Walk Time"]);
-  //       // console.log(marginalTransitW[0]);
-  //       // console.log(distances[i]["Walk Time"]);
-  //       // console.log("Marginal Walk Score:" + walkScore);
-  //       bikeScore =  Math.exp(marginalTransitW[1]*distances[i]["Bike Time"]);
-  //       transitScore =  Math.exp(marginalTransitW[2]*distances[i]["Transit Time"]);
-  //       driveScore =  Math.exp(marginalTransitW[3]*distances[i]["Drive Time"]);
-  //       walkScore = walkScore * absoluteTransitW[0];
-  //       // console.log("Absolute Walk Score:" + walkScore);
-  //       bikeScore = bikeScore * absoluteTransitW[1];
-  //       transitScore = transitScore * absoluteTransitW[2];
-  //       driveScore = driveScore * absoluteTransitW[3];
-  //       aggScore = walkScore + bikeScore + transitScore + driveScore;
-  //       // console.log("Agg Score:" + aggScore);
-  //       aggScore = aggScore * Math.pow(marginalAmenW[4],distances[i]["rank"]);
-  //       // console.log("Agg Score:" + aggScore);
-  //       aggScore = aggScore * absoluteAmenW[4];
-  //       score += aggScore;
-  //       // console.log(score);
-  //     }
-  //     if (distances[i].type == 'bank') {
-  //       walkScore =  Math.exp(marginalTransitW[0]*distances[i]["Walk Time"]);
-  //       bikeScore =  Math.exp(marginalTransitW[1]*distances[i]["Bike Time"]);
-  //       transitScore =  Math.exp(marginalTransitW[2]*distances[i]["Transit Time"]);
-  //       driveScore = Math.exp(marginalTransitW[3]*distances[i]["Drive Time"]);
-  //       walkScore = walkScore * absoluteTransitW[0];
-  //       bikeScore = bikeScore * absoluteTransitW[1];
-  //       transitScore = transitScore * absoluteTransitW[2];
-  //       driveScore = driveScore * absoluteTransitW[3];
-  //       aggScore = walkScore + bikeScore + transitScore + driveScore;
-  //       aggScore = aggScore * Math.pow(marginalAmenW[2],distances[i]["rank"]);
-  //       aggScore = aggScore * absoluteAmenW[2];
-  //       score += aggScore;
-  //       // console.log(score);
-  //     }
-  //     if (distances[i].type == 'pharmacy') {
-  //       walkScore =  Math.exp(marginalTransitW[0]*distances[i]["Walk Time"]);
-  //       bikeScore =  Math.exp(marginalTransitW[1]*distances[i]["Bike Time"]);
-  //       transitScore =  Math.exp(marginalTransitW[2]*distances[i]["Transit Time"]);
-  //       driveScore =  Math.exp(marginalTransitW[3]*distances[i]["Drive Time"]);
-  //       walkScore = walkScore * absoluteTransitW[0];
-  //       bikeScore = bikeScore * absoluteTransitW[1];
-  //       transitScore = transitScore * absoluteTransitW[2];
-  //       driveScore = driveScore * absoluteTransitW[3];
-  //       aggScore = walkScore + bikeScore + transitScore + driveScore;
-  //       aggScore = aggScore * Math.pow(marginalAmenW[1],distances[i]["rank"]);
-  //       aggScore = aggScore * absoluteAmenW[1];
-  //       score += aggScore;
-  //       // console.log(score);
-  //     }
-  //     if (distances[i].type == 'store') {
-  //       walkScore =  Math.exp(marginalTransitW[0]*distances[i]["Walk Time"]);
-  //       bikeScore =  Math.exp(marginalTransitW[1]*distances[i]["Bike Time"]);
-  //       transitScore =  Math.exp(marginalTransitW[2]*distances[i]["Transit Time"]);
-  //       driveScore =  Math.exp(marginalTransitW[3]*distances[i]["Drive Time"]);
-  //       walkScore = walkScore * absoluteTransitW[0];
-  //       bikeScore = bikeScore * absoluteTransitW[1];
-  //       transitScore = transitScore * absoluteTransitW[2];
-  //       driveScore = driveScore * absoluteTransitW[3];
-  //       aggScore = walkScore + bikeScore + transitScore + driveScore;
-  //       aggScore = aggScore * Math.pow(marginalAmenW[0],distances[i]["rank"]);
-  //       aggScore = aggScore * absoluteAmenW[0];
-  //       score += aggScore;
-  //       // console.log(score);
-  //     }
-  //     if (distances[i].type == 'supermarket') {
-  //       walkScore =  Math.exp(marginalTransitW[0]*distances[i]["Walk Time"]);
-  //       bikeScore =  Math.exp(marginalTransitW[1]*distances[i]["Bike Time"]);
-  //       transitScore =  Math.exp(marginalTransitW[2]*distances[i]["Transit Time"]);
-  //       driveScore =  Math.exp(marginalTransitW[3]*distances[i]["Drive Time"]);
-  //       walkScore = walkScore * absoluteTransitW[0];
-  //       bikeScore = bikeScore * absoluteTransitW[1];
-  //       transitScore = transitScore * absoluteTransitW[2];
-  //       driveScore = driveScore * absoluteTransitW[3];
-  //       aggScore = walkScore + bikeScore + transitScore + driveScore;
-  //       aggScore = aggScore * Math.pow(marginalAmenW[3],distances[i]["rank"]);
-  //       aggScore = aggScore * absoluteAmenW[3];
-  //       score += aggScore;
-  //       // console.log(score);
-  //     };
-  //   };
-  // };
   };
   layer.feature.properties.score = score;
   if (layer.feature.properties && layer.feature.properties.score) {
@@ -399,10 +1143,10 @@ function onEachFeature(feature, layer) {
       fillColor: getColor(layer.feature.properties.score),
       weight: 1,
       // dashArray: '3 10',
-      // opacity: 0,
+      opacity: .8,
       color: "black",
       // dashArray: '3',
-      fillOpacity: 0.75
+      fillOpacity: 0.8
   });
   if (score > maxScore) {
     maxScore = score;
@@ -605,10 +1349,10 @@ function updateMap() {
   }, 0);
   var avg = sum / scores.length;
   std = standardDeviation(scores);
-  console.log(scores);
-  console.log(avg);
-  console.log(std);
-  console.log(avg + 2*std);
+  // console.log(scores);
+  // console.log(avg);
+  // console.log(std);
+  // console.log(avg + 2*std);
   function getColor(d) {
     return d > (avg + 2*std) ? '#4FDE02' :
         d > (avg + std) ? '#A0EB15' :
@@ -622,10 +1366,11 @@ function updateMap() {
       fillColor: color,
       weight: 1,
       // dashArray: '3 10',
-      // opacity: 0,
+      opacity: .2,
       color: "black",
+
       // dashArray: '3',
-      fillOpacity: 0.75
+      fillOpacity: 0.6
     });
   });
   // filteredLayer = L.geoJSON(FC, {
