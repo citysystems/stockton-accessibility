@@ -432,7 +432,7 @@
               <input id="walkVal" type='number' class="form-control bfh-number" name="walkVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
             </div>
             <div class="col-md-4">
-              <input id="walkMVal" type='number' class="form-control bfh-number" name="walkMVal" data-min=0 data-max=30 min=0 max=30 value=11 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
+              <input id="walkMVal" type='number' class="form-control bfh-number" name="walkMVal" data-min=0 data-max=30 min=0 max=30 value=30 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
             </div>
           </div>
           <div class="row">
@@ -443,7 +443,7 @@
               <input id="bikeVal" type='number' class="form-control bfh-number" name="bikeVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
             </div>
             <div class="col-md-4">
-              <input id="bikeMVal" type='number' class="form-control bfh-number" name="bikeMVal" data-min=1 data-max=10 min=1 max=10 value=12 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+              <input id="bikeMVal" type='number' class="form-control bfh-number" name="bikeMVal" data-min=0 data-max=30 min=0 max=30 value=30 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
             </div>
           </div>
           <div class="row">
@@ -454,7 +454,7 @@
               <input id="transitVal" type='number' class="form-control bfh-number" name="transitVal" data-min=0 data-max=10 min=0 max=10 value=2 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
             </div>
             <div class="col-md-4">
-              <input id="transitMVal" type='number' class="form-control bfh-number" name="transitMVal" data-min=1 data-max=10 min=1 max=10 value=16 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+              <input id="transitMVal" type='number' class="form-control bfh-number" name="transitMVal" data-min=0 data-max=30 min=0 max=30 value=30 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
             </div>
           </div>
           <div class="row">
@@ -465,12 +465,17 @@
               <input id="driveVal" type='number' class="form-control bfh-number" name="driveVal" data-min=0 data-max=10 min=0 max=10 value=3 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 0 to 10">
             </div>
             <div class="col-md-4">
-              <input id="driveMVal" type='number' class="form-control bfh-number" name="driveMVal" data-min=1 data-max=10 min=1 max=10 value=16 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 10">
+              <input id="driveMVal" type='number' class="form-control bfh-number" name="driveMVal" data-min=0 data-max=30 min=0 max=30 value=30 oninput='updateMap()' data-toggle="tooltip" data-placement="top" title="Input number from 1 to 30: the max number of minutes you'd be willing to take to get to your destination.">
             </div>
           </div>
         </div>
-        <div class="col-md-7" style="padding:0;width:100%">
-          <div id='my-map'></div>
+        <div class="col-md-7" style="width:100%">
+          <div class='row' style="height:450px">
+            <div id='my-map' style="height:450px"></div>
+          </div>
+          <div class='row'>
+            <div class='col-md-6'><br>Average Stockton Accessibility Score: <span id="stocktonAVG"> 0 </span></div>
+            <div class='col-md-6'><br>Average South Stockton Promize Zone Accessibility Score: <span id="sspzAVG"> 0 </span></div>
         </div>
       </div>
       <div class='row' >
@@ -514,6 +519,8 @@
   <script src='js/distances.js'></script>
   <script src='js/amenities.js'></script>
   <script src='js/blockGroups.js'></script>
+  <script src='js/sspz.js'></script>
+  <script src='js/sspz_BGs.js'></script>
   <script src="js/scripts.js"></script>
 </body>
 

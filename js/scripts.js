@@ -61,6 +61,7 @@ function getColorAmen(d) {
     }
   };
 scores = [];
+sspz_scores = [];
 maxScore = 0;
 minScore = 0;
 function onEachFeature(feature, layer) {
@@ -1155,6 +1156,11 @@ function onEachFeature(feature, layer) {
     minScore = score;
   };
   scores.push(score);
+  for(var i=0; i<sspz_BGs.length; i++){
+   if(sspz_BGs[i] === bg){
+        sspz_scores.push(score);
+   }
+}
 };
 
 // var store = L.geoJson(amenities, {
@@ -1280,15 +1286,26 @@ legend.addTo(map);
 // legend1.addTo(map);
 //
 //
-// var overlays = {
-//     'Store': store,
-//     "Pharmacy": pharmacy,
-//     "Bank": bank,
-//     "Supermarket": supermarket,
-//     "Restaurant": restaurant
-// 		};
-//
-// L.control.layers(null, overlays).addTo(map);
+var sspz = L.geoJSON(sspz, {
+  style: {
+        fillColor: "grey",
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: .3,
+
+    },
+  // onEachFeature: onEachFeature,
+});
+
+// sspz.addTo(map);
+
+var overlays = {
+    "South Stockton Promise Zone" : sspz
+		};
+
+L.control.layers(null, overlays).addTo(map);
 
 var filteredLayer = L.geoJSON(blockGroups, {
   style: {
@@ -1297,7 +1314,7 @@ var filteredLayer = L.geoJSON(blockGroups, {
         // opacity: 1,
         // color: 'white',
         dashArray: '3',
-        fillOpacity: 0.7
+        fillOpacity: 0.6
     },
   onEachFeature: onEachFeature,
 });
@@ -1334,6 +1351,7 @@ function updateMap() {
   maxScore = 0;
   minScore = 0;
   scores = [];
+  sspz_scores = [];
   var features = blockGroups.features
   var FC = {
     type: 'FeatureCollection',
@@ -1347,8 +1365,14 @@ function updateMap() {
   var sum = scores.reduce(function(sum, value){
     return sum + value;
   }, 0);
+  var sumSSPZ = sspz_scores.reduce(function(sum, value){
+    return sum + value;
+  }, 0);
   var avg = sum / scores.length;
+  var avgSSPZ = sumSSPZ / sspz_scores.length;
   std = standardDeviation(scores);
+  document.getElementById("stocktonAVG").textContent=parseInt(avg);
+  document.getElementById("sspzAVG").textContent=parseInt(avgSSPZ);
   // console.log(scores);
   // console.log(avg);
   // console.log(std);
@@ -1370,7 +1394,7 @@ function updateMap() {
       color: "black",
 
       // dashArray: '3',
-      fillOpacity: 0.6
+      fillOpacity: 0.4
     });
   });
   // filteredLayer = L.geoJSON(FC, {
