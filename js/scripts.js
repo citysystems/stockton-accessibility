@@ -2,7 +2,6 @@ distances//Initialize tooltips
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
-console.log(distances);
 //Create the map variable
 var map = L.map('my-map', {
     scrollWheelZoom: false
@@ -62,8 +61,18 @@ function getColorAmen(d) {
   };
 scores = [];
 sspz_scores = [];
+scores_AVG = 0;
+sspzScores_AVG = 0;
 maxScore = 0;
 minScore = 0;
+popTotal = 0;
+popSSPZ = 0;
+for(var i=0; i<pop.length; i++){
+ popTotal = popTotal + pop[i].pop;
+};
+for(var i=0; i<sspzPop.length; i++){
+  popSSPZ = popSSPZ + parseInt(sspzPop[i].popratio);
+};
 function onEachFeature(feature, layer) {
   //Get buttons
   var absoluteAmenW = [$("#atmVal"),$("#bakeryVal"),$("#bankVal"), $("#beautySalonVal"), $("#bookStoreVal"),
@@ -145,10 +154,6 @@ function onEachFeature(feature, layer) {
   //marginal transit calc: -ln0.1/t(minutes)
   var marginalTransitW = [((Math.log(0.1))/($("#walkMVal").val())), ((Math.log(0.1))/($("#bikeMVal").val())), ((Math.log(0.1))/($("#transitMVal").val())),
   ((Math.log(0.1))/($("#transitMVal").val()))];
-  // console.log(absoluteAmenW);
-  // console.log(marginalAmenW);
-  // console.log(absoluteTransitW);
-  // console.log(marginalTransitW);
   bg = layer.feature.properties.bg;
   score = 0;
   //marginal good implementation = total transit score * MarginalAmenW(given type)^"rank"
@@ -1132,9 +1137,17 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[33],0)) * absoluteAmenW[33]
       score += aggScore;
-
-      console.log(score);
     };
+  };
+  for(var i=0; i<pop.length; i++){
+   if(pop[i].bg === bg){
+     scores_AVG = scores_AVG + (score*pop[i].pop);
+   }
+  };
+ for(var i=0; i<sspzPop.length; i++){
+  if(sspzPop[i].bg === bg){
+    sspzScores_AVG = sspzScores_AVG + (score*parseInt(sspzPop[i].popratio));
+    }
   };
   layer.feature.properties.score = score;
   if (layer.feature.properties && layer.feature.properties.score) {
@@ -1149,6 +1162,7 @@ function onEachFeature(feature, layer) {
       // dashArray: '3',
       fillOpacity: 0.8
   });
+
   if (score > maxScore) {
     maxScore = score;
   };
@@ -1160,7 +1174,7 @@ function onEachFeature(feature, layer) {
    if(sspz_BGs[i] === bg){
         sspz_scores.push(score);
    }
-}
+  }
 };
 
 // var store = L.geoJson(amenities, {
@@ -1352,6 +1366,8 @@ function updateMap() {
   minScore = 0;
   scores = [];
   sspz_scores = [];
+  scores_AVG = 0;
+  sspzScores_AVG = 0;
   var features = blockGroups.features
   var FC = {
     type: 'FeatureCollection',
@@ -1370,13 +1386,17 @@ function updateMap() {
   }, 0);
   var avg = sum / scores.length;
   var avgSSPZ = sumSSPZ / sspz_scores.length;
+  console.log(sspzScores_AVG);
+  console.log(scores_AVG);
+  console.log(popSSPZ);
+  console.log(popTotal);
+  sspzScores_AVG = sspzScores_AVG/popSSPZ;
+  scores_AVG = scores_AVG/popTotal;
+  console.log(sspzScores_AVG);
+  console.log(scores_AVG);
   std = standardDeviation(scores);
-  document.getElementById("stocktonAVG").textContent=parseInt(avg);
-  document.getElementById("sspzAVG").textContent=parseInt(avgSSPZ);
-  // console.log(scores);
-  // console.log(avg);
-  // console.log(std);
-  // console.log(avg + 2*std);
+  document.getElementById("stocktonAVG").textContent=parseInt(scores_AVG);
+  document.getElementById("sspzAVG").textContent=parseInt(sspzScores_AVG);
   function getColor(d) {
     return d > (avg + 2*std) ? '#4FDE02' :
         d > (avg + std) ? '#A0EB15' :
