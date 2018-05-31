@@ -172,10 +172,10 @@ function onEachFeature(feature, layer) {
     bikeScoreBM = 0;
     transitScoreBM = 0;
     driveScoreBM = 0;
-    walkScoreBM = (Math.exp(marginalTransitW[0]*10)) * absoluteTransitW[0];
-    bikeScoreBM = (Math.exp(marginalTransitW[1]*10)) * absoluteTransitW[1];
-    transitScoreBM = (Math.exp(marginalTransitW[2]*10)) * absoluteTransitW[2];
-    driveScoreBM = (Math.exp(marginalTransitW[3]*10)) * absoluteTransitW[3];
+    walkScoreBM = (Math.exp(marginalTransitW[0]*$("#walkMVal").val())) * absoluteTransitW[0];
+    bikeScoreBM = (Math.exp(marginalTransitW[1]*$("#bikeMVal").val())) * absoluteTransitW[1];
+    transitScoreBM = (Math.exp(marginalTransitW[2]*$("#transitMVal").val())) * absoluteTransitW[2];
+    driveScoreBM = (Math.exp(marginalTransitW[3]*$("#driveMVal").val())) * absoluteTransitW[3];
     aggScoreBMConstant = walkScoreBM + bikeScoreBM + transitScoreBM + driveScoreBM;
     if (distances[i].spatial_id == bg) {
       //ADDING ATMS
