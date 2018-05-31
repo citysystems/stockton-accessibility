@@ -63,6 +63,9 @@ scores = [];
 sspz_scores = [];
 scores_AVG = 0;
 sspzScores_AVG = 0;
+scores_AVGBM = 0;
+sspzScores_AVGBM = 0;
+benchmark = 0;
 maxScore = 0;
 minScore = 0;
 popTotal = 0;
@@ -156,6 +159,7 @@ function onEachFeature(feature, layer) {
   ((Math.log(0.1))/($("#transitMVal").val()))];
   bg = layer.feature.properties.bg;
   score = 0;
+  scoreBM = 0;
   //marginal good implementation = total transit score * MarginalAmenW(given type)^"rank"
   //util per transit: exp(marginal weighting * actual travel time)
   //marginal score per transit type, scale each according to absolute weights, sum together, marginal good weighting, scale by the absolute good weighting, add together
@@ -164,6 +168,15 @@ function onEachFeature(feature, layer) {
     bikeScore = 0;
     transitScore = 0;
     driveScore = 0;
+    walkScoreBM = 0;
+    bikeScoreBM = 0;
+    transitScoreBM = 0;
+    driveScoreBM = 0;
+    walkScoreBM = (Math.exp(marginalTransitW[0]*10)) * absoluteTransitW[0];
+    bikeScoreBM = (Math.exp(marginalTransitW[1]*10)) * absoluteTransitW[1];
+    transitScoreBM = (Math.exp(marginalTransitW[2]*10)) * absoluteTransitW[2];
+    driveScoreBM = (Math.exp(marginalTransitW[3]*10)) * absoluteTransitW[3];
+    aggScoreBMConstant = walkScoreBM + bikeScoreBM + transitScoreBM + driveScoreBM;
     if (distances[i].spatial_id == bg) {
       //ADDING ATMS
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_atm_1)) * absoluteTransitW[0];
@@ -173,6 +186,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[0],0)) * absoluteAmenW[0];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[0],0)) * absoluteAmenW[0];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_atm_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_atm_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_atm_2)) * absoluteTransitW[2];
@@ -180,6 +195,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[0],1)) * absoluteAmenW[0];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[0],1)) * absoluteAmenW[0];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_atm_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_atm_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_atm_3)) * absoluteTransitW[2];
@@ -187,6 +204,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[0],2)) * absoluteAmenW[0];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[0],2)) * absoluteAmenW[0];
+      scoreBM += aggScoreBM;
 
       //ADDING BAKERIES
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bakery_1)) * absoluteTransitW[0];
@@ -196,6 +215,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[1],0)) * absoluteAmenW[1]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],0)) * absoluteAmenW[1];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bakery_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bakery_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bakery_2)) * absoluteTransitW[2];
@@ -203,6 +224,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[1],1)) * absoluteAmenW[1]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],1)) * absoluteAmenW[1];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bakery_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bakery_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bakery_3)) * absoluteTransitW[2];
@@ -210,6 +233,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[1],2)) * absoluteAmenW[1];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],2)) * absoluteAmenW[1];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bakery_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bakery_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bakery_4)) * absoluteTransitW[2];
@@ -217,6 +242,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[1],3)) * absoluteAmenW[1];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],3)) * absoluteAmenW[1];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bakery_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bakery_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bakery_5)) * absoluteTransitW[2];
@@ -224,6 +251,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[1],4)) * absoluteAmenW[1];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],4)) * absoluteAmenW[1];
+      scoreBM += aggScoreBM;
 
       //ADDING BANKS
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bank_1)) * absoluteTransitW[0];
@@ -233,6 +262,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[2],0)) * absoluteAmenW[2]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[2],0)) * absoluteAmenW[2];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bank_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bank_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bank_2)) * absoluteTransitW[2];
@@ -240,6 +271,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[2],1)) * absoluteAmenW[2]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[2],1)) * absoluteAmenW[2];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bank_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bank_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bank_3)) * absoluteTransitW[2];
@@ -247,6 +280,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[2],2)) * absoluteAmenW[2];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[2],2)) * absoluteAmenW[2];
+      scoreBM += aggScoreBM;
 
       //ADDING BEAUTY SALONS
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_beauty_salon_1)) * absoluteTransitW[0];
@@ -256,6 +291,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[3],0)) * absoluteAmenW[3]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[3],0)) * absoluteAmenW[3];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_beauty_salon_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_beauty_salon_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_beauty_salon_2)) * absoluteTransitW[2];
@@ -263,6 +300,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[3],1)) * absoluteAmenW[3]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[3],1)) * absoluteAmenW[3];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_beauty_salon_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_beauty_salon_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_beauty_salon_3)) * absoluteTransitW[2];
@@ -270,6 +309,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[3],2)) * absoluteAmenW[3];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[3],2)) * absoluteAmenW[3];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_beauty_salon_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_beauty_salon_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_beauty_salon_4)) * absoluteTransitW[2];
@@ -277,6 +318,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[3],3)) * absoluteAmenW[3];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[3],3)) * absoluteAmenW[3];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_beauty_salon_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_beauty_salon_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_beauty_salon_5)) * absoluteTransitW[2];
@@ -284,6 +327,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[3],4)) * absoluteAmenW[3];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[3],4)) * absoluteAmenW[3];
+      scoreBM += aggScoreBM;
 
       //ADDING BOOK STORES
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_book_store_1)) * absoluteTransitW[0];
@@ -293,6 +338,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[4],0)) * absoluteAmenW[4]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[4],0)) * absoluteAmenW[4];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_book_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_book_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_book_store_2)) * absoluteTransitW[2];
@@ -300,6 +347,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[4],1)) * absoluteAmenW[4]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[4],1)) * absoluteAmenW[4];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_book_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_book_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_book_store_3)) * absoluteTransitW[2];
@@ -307,6 +356,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[4],2)) * absoluteAmenW[4];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[4],2)) * absoluteAmenW[4];
+      scoreBM += aggScoreBM;
 
       //ADDING BUS STATIONS 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_1)) * absoluteTransitW[0];
@@ -316,6 +367,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[5],0)) * absoluteAmenW[5]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[5],0)) * absoluteAmenW[5];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bus_station_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bus_station_2)) * absoluteTransitW[2];
@@ -323,6 +376,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[5],1)) * absoluteAmenW[5]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[5],1)) * absoluteAmenW[5];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_bus_station_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_bus_station_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bus_station_3)) * absoluteTransitW[2];
@@ -330,6 +385,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[5],2)) * absoluteAmenW[5];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[5],2)) * absoluteAmenW[5];
+      scoreBM += aggScoreBM;
 
 
       //ADDING CAFES 5
@@ -340,6 +397,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[6],0)) * absoluteAmenW[6]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[6],0)) * absoluteAmenW[6];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_2)) * absoluteTransitW[2];
@@ -347,6 +406,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[6],1)) * absoluteAmenW[6]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[6],1)) * absoluteAmenW[6];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_3)) * absoluteTransitW[2];
@@ -354,6 +415,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[6],2)) * absoluteAmenW[6];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[6],2)) * absoluteAmenW[6];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_4)) * absoluteTransitW[2];
@@ -361,6 +424,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[6],3)) * absoluteAmenW[6];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[6],3)) * absoluteAmenW[6];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_cafe_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_cafe_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_cafe_5)) * absoluteTransitW[2];
@@ -368,6 +433,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[6],4)) * absoluteAmenW[6];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[6],4)) * absoluteAmenW[6];
+      scoreBM += aggScoreBM;
 
       //ADDING CLOTHING STORES 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_1)) * absoluteTransitW[0];
@@ -377,6 +444,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[7],0)) * absoluteAmenW[7]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[7],0)) * absoluteAmenW[7];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_2)) * absoluteTransitW[2];
@@ -384,6 +453,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[7],1)) * absoluteAmenW[7]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[7],1)) * absoluteAmenW[7];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_3)) * absoluteTransitW[2];
@@ -391,6 +462,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[7],2)) * absoluteAmenW[7];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[7],2)) * absoluteAmenW[7];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_4)) * absoluteTransitW[2];
@@ -398,6 +471,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[7],3)) * absoluteAmenW[7];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[7],3)) * absoluteAmenW[7];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_clothing_store_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_clothing_store_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_clothing_store_5)) * absoluteTransitW[2];
@@ -405,6 +480,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[7],4)) * absoluteAmenW[7];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[7],4)) * absoluteAmenW[7];
+      scoreBM += aggScoreBM;
 
       //ADDING CONVENIENCE STORES 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_1)) * absoluteTransitW[0];
@@ -414,6 +491,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[8],0)) * absoluteAmenW[8]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[8],0)) * absoluteAmenW[8];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_2)) * absoluteTransitW[2];
@@ -421,6 +500,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[8],1)) * absoluteAmenW[8]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[8],1)) * absoluteAmenW[8];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_3)) * absoluteTransitW[2];
@@ -428,6 +509,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[8],2)) * absoluteAmenW[8];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[8],2)) * absoluteAmenW[8];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_4)) * absoluteTransitW[2];
@@ -435,6 +518,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[8],3)) * absoluteAmenW[8];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[8],3)) * absoluteAmenW[8];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_convenience_store_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_convenience_store_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_convenience_store_5)) * absoluteTransitW[2];
@@ -442,6 +527,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[8],4)) * absoluteAmenW[8];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[8],4)) * absoluteAmenW[8];
+      scoreBM += aggScoreBM;
 
       //ADDING DENTISTS 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_1)) * absoluteTransitW[0];
@@ -451,6 +538,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[9],0)) * absoluteAmenW[9]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[9],0)) * absoluteAmenW[9];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_dentist_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_dentist_2)) * absoluteTransitW[2];
@@ -458,6 +547,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[9],1)) * absoluteAmenW[9]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[9],1)) * absoluteAmenW[9];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_dentist_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_dentist_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_dentist_3)) * absoluteTransitW[2];
@@ -465,6 +556,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[9],2)) * absoluteAmenW[9];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[9],2)) * absoluteAmenW[9];
+      scoreBM += aggScoreBM;
 
       //ADDING DEPARTMENT STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_1)) * absoluteTransitW[0];
@@ -474,6 +567,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[10],0)) * absoluteAmenW[10]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[10],0)) * absoluteAmenW[10];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_department_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_department_store_2)) * absoluteTransitW[2];
@@ -481,6 +576,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[10],1)) * absoluteAmenW[10]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[10],1)) * absoluteAmenW[10];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_department_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_department_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_department_store_3)) * absoluteTransitW[2];
@@ -488,6 +585,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[10],2)) * absoluteAmenW[10];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[10],2)) * absoluteAmenW[10];
+      scoreBM += aggScoreBM;
 
       //ADDING DOCTORS 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_1)) * absoluteTransitW[0];
@@ -497,6 +596,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[11],0)) * absoluteAmenW[11]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[11],0)) * absoluteAmenW[11];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_doctor_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_doctor_2)) * absoluteTransitW[2];
@@ -504,6 +605,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[11],1)) * absoluteAmenW[11]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[11],1)) * absoluteAmenW[11];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_doctor_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_doctor_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_doctor_3)) * absoluteTransitW[2];
@@ -511,6 +614,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[11],2)) * absoluteAmenW[11];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[11],2)) * absoluteAmenW[11];
+      scoreBM += aggScoreBM;
 
       //ADDING ELECTRONICS STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_1)) * absoluteTransitW[0];
@@ -520,6 +625,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[12],0)) * absoluteAmenW[12]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[12],0)) * absoluteAmenW[12];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_electronics_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_electronics_store_2)) * absoluteTransitW[2];
@@ -527,6 +634,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[12],1)) * absoluteAmenW[12]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[12],1)) * absoluteAmenW[12];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_electronics_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_electronics_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_electronics_store_3)) * absoluteTransitW[2];
@@ -534,6 +643,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[12],2)) * absoluteAmenW[12];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[12],2)) * absoluteAmenW[12];
+      scoreBM += aggScoreBM;
 
       //ADDING Florist 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_1)) * absoluteTransitW[0];
@@ -543,6 +654,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[13],0)) * absoluteAmenW[13]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[13],0)) * absoluteAmenW[13];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_florist_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_florist_2)) * absoluteTransitW[2];
@@ -550,6 +663,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[13],1)) * absoluteAmenW[13]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[13],1)) * absoluteAmenW[13];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_florist_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_florist_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_florist_3)) * absoluteTransitW[2];
@@ -557,6 +672,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[13],2)) * absoluteAmenW[13];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[13],2)) * absoluteAmenW[13];
+      scoreBM += aggScoreBM;
 
       //ADDING FURNITURE STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_1)) * absoluteTransitW[0];
@@ -566,6 +683,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[14],0)) * absoluteAmenW[14]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[14],0)) * absoluteAmenW[14];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_furniture_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_furniture_store_2)) * absoluteTransitW[2];
@@ -573,6 +692,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[14],1)) * absoluteAmenW[14]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[14],1)) * absoluteAmenW[14];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_furniture_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_furniture_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_furniture_store_3)) * absoluteTransitW[2];
@@ -580,6 +701,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[14],2)) * absoluteAmenW[14];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[14],2)) * absoluteAmenW[14];
+      scoreBM += aggScoreBM;
 
       //ADDING GYM 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_1)) * absoluteTransitW[0];
@@ -589,6 +712,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[15],0)) * absoluteAmenW[15]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[15],0)) * absoluteAmenW[15];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_gym_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_gym_2)) * absoluteTransitW[2];
@@ -596,6 +721,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[15],1)) * absoluteAmenW[15]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[15],1)) * absoluteAmenW[15];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_gym_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_gym_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_gym_3)) * absoluteTransitW[2];
@@ -603,6 +730,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[15],2)) * absoluteAmenW[15];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[15],2)) * absoluteAmenW[15];
+      scoreBM += aggScoreBM;
 
       //ADDING HAIR CARE STORES 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_1)) * absoluteTransitW[0];
@@ -612,6 +741,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[16],0)) * absoluteAmenW[16]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[16],0)) * absoluteAmenW[16];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_2)) * absoluteTransitW[2];
@@ -619,6 +750,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[16],1)) * absoluteAmenW[16]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[16],1)) * absoluteAmenW[16];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_3)) * absoluteTransitW[2];
@@ -626,6 +759,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[16],2)) * absoluteAmenW[16];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[16],2)) * absoluteAmenW[16];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_4)) * absoluteTransitW[2];
@@ -633,6 +768,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[16],3)) * absoluteAmenW[16];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[16],3)) * absoluteAmenW[16];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hair_care_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hair_care_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hair_care_5)) * absoluteTransitW[2];
@@ -640,6 +777,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[16],4)) * absoluteAmenW[16];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[16],4)) * absoluteAmenW[16];
+      scoreBM += aggScoreBM;
 
       //ADDING HARDWARe STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_1)) * absoluteTransitW[0];
@@ -649,6 +788,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[17],0)) * absoluteAmenW[17]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[17],0)) * absoluteAmenW[17];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hardware_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hardware_store_2)) * absoluteTransitW[2];
@@ -656,6 +797,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[17],1)) * absoluteAmenW[17]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[17],1)) * absoluteAmenW[17];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hardware_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hardware_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hardware_store_3)) * absoluteTransitW[2];
@@ -663,6 +806,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[17],2)) * absoluteAmenW[17];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[17],2)) * absoluteAmenW[17];
+      scoreBM += aggScoreBM;
 
       //ADDING HOME GOODS STORES 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_1)) * absoluteTransitW[0];
@@ -672,6 +817,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[18],0)) * absoluteAmenW[18]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[18],0)) * absoluteAmenW[18];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_2)) * absoluteTransitW[2];
@@ -679,6 +826,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[18],1)) * absoluteAmenW[18]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[18],1)) * absoluteAmenW[18];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_3)) * absoluteTransitW[2];
@@ -686,6 +835,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[18],2)) * absoluteAmenW[18];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[18],2)) * absoluteAmenW[18];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_4)) * absoluteTransitW[2];
@@ -693,6 +844,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[18],3)) * absoluteAmenW[18];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[18],3)) * absoluteAmenW[18];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_home_goods_store_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_home_goods_store_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_home_goods_store_5)) * absoluteTransitW[2];
@@ -700,6 +853,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[18],4)) * absoluteAmenW[18];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[18],4)) * absoluteAmenW[18];
+      scoreBM += aggScoreBM;
 
 
       //ADDING HOSPITALS 3
@@ -710,6 +865,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[19],0)) * absoluteAmenW[19]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[19],0)) * absoluteAmenW[19];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hospital_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hospital_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hospital_2)) * absoluteTransitW[2];
@@ -717,6 +874,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[19],1)) * absoluteAmenW[19]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[19],1)) * absoluteAmenW[19];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_hospital_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_hospital_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_hospital_3)) * absoluteTransitW[2];
@@ -724,6 +883,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[19],2)) * absoluteAmenW[19];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[19],2)) * absoluteAmenW[19];
+      scoreBM += aggScoreBM;
 
       //ADDING LAUNDRY 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_1)) * absoluteTransitW[0];
@@ -733,6 +894,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[20],0)) * absoluteAmenW[20]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[20],0)) * absoluteAmenW[20];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_laundry_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_laundry_2)) * absoluteTransitW[2];
@@ -740,6 +903,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[20],1)) * absoluteAmenW[20]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[20],1)) * absoluteAmenW[20];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_laundry_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_laundry_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_laundry_3)) * absoluteTransitW[2];
@@ -747,6 +912,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[20],2)) * absoluteAmenW[20];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[20],2)) * absoluteAmenW[20];
+      scoreBM += aggScoreBM;
 
       //ADDING LIBRARY 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_1)) * absoluteTransitW[0];
@@ -756,6 +923,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[21],0)) * absoluteAmenW[21]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[21],0)) * absoluteAmenW[21];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_library_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_library_2)) * absoluteTransitW[2];
@@ -763,6 +932,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[21],1)) * absoluteAmenW[21]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[21],1)) * absoluteAmenW[21];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_library_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_library_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_library_3)) * absoluteTransitW[2];
@@ -770,6 +941,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[21],2)) * absoluteAmenW[21];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[21],2)) * absoluteAmenW[21];
+      scoreBM += aggScoreBM;
 
       //ADDING LIQUOR STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_1)) * absoluteTransitW[0];
@@ -779,6 +952,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[22],0)) * absoluteAmenW[22]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[22],0)) * absoluteAmenW[22];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_liquor_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_liquor_store_2)) * absoluteTransitW[2];
@@ -786,6 +961,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[22],1)) * absoluteAmenW[22]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[22],1)) * absoluteAmenW[22];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_liquor_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_liquor_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_liquor_store_3)) * absoluteTransitW[2];
@@ -793,6 +970,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[22],2)) * absoluteAmenW[22];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[22],2)) * absoluteAmenW[22];
+      scoreBM += aggScoreBM;
 
       //ADDING TAKEOUT 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_1)) * absoluteTransitW[0];
@@ -802,6 +981,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[23],0)) * absoluteAmenW[23]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[23],0)) * absoluteAmenW[23];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_2)) * absoluteTransitW[2];
@@ -809,6 +990,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[23],1)) * absoluteAmenW[23]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[23],1)) * absoluteAmenW[23];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_3)) * absoluteTransitW[2];
@@ -816,6 +999,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[23],2)) * absoluteAmenW[23];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[23],2)) * absoluteAmenW[23];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_4)) * absoluteTransitW[2];
@@ -823,6 +1008,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[23],3)) * absoluteAmenW[23];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[23],3)) * absoluteAmenW[23];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_meal_takeaway_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_meal_takeaway_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_meal_takeaway_5)) * absoluteTransitW[2];
@@ -830,6 +1017,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[23],4)) * absoluteAmenW[23];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[23],4)) * absoluteAmenW[23];
+      scoreBM += aggScoreBM;
 
       //ADDING PARK 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_1)) * absoluteTransitW[0];
@@ -839,6 +1028,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[24],0)) * absoluteAmenW[24]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[24],0)) * absoluteAmenW[24];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_2)) * absoluteTransitW[2];
@@ -846,6 +1037,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[24],1)) * absoluteAmenW[24]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[24],1)) * absoluteAmenW[24];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_3)) * absoluteTransitW[2];
@@ -853,6 +1046,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[24],2)) * absoluteAmenW[24];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[24],2)) * absoluteAmenW[24];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_4)) * absoluteTransitW[2];
@@ -860,6 +1055,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[24],3)) * absoluteAmenW[24];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[24],3)) * absoluteAmenW[24];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_park_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_park_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_park_5)) * absoluteTransitW[2];
@@ -867,6 +1064,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[24],4)) * absoluteAmenW[24];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[24],4)) * absoluteAmenW[24];
+      scoreBM += aggScoreBM;
 
       //ADDING PET STORES 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_1)) * absoluteTransitW[0];
@@ -876,6 +1075,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[25],0)) * absoluteAmenW[25]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[25],0)) * absoluteAmenW[25];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pet_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pet_store_2)) * absoluteTransitW[2];
@@ -883,6 +1084,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[25],1)) * absoluteAmenW[25]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[25],1)) * absoluteAmenW[25];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pet_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pet_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pet_store_3)) * absoluteTransitW[2];
@@ -890,6 +1093,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[25],2)) * absoluteAmenW[25];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[25],2)) * absoluteAmenW[25];
+      scoreBM += aggScoreBM;
 
       //ADDING PHARMACY 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_1)) * absoluteTransitW[0];
@@ -899,6 +1104,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[26],0)) * absoluteAmenW[26]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[26],0)) * absoluteAmenW[26];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pharmacy_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pharmacy_2)) * absoluteTransitW[2];
@@ -906,6 +1113,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[26],1)) * absoluteAmenW[26]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[26],1)) * absoluteAmenW[26];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_pharmacy_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_pharmacy_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_pharmacy_3)) * absoluteTransitW[2];
@@ -913,6 +1122,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[26],2)) * absoluteAmenW[26];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[26],2)) * absoluteAmenW[26];
+      scoreBM += aggScoreBM;
 
       //ADDING RESTAURANT 10
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_1)) * absoluteTransitW[0];
@@ -922,6 +1133,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],0)) * absoluteAmenW[27]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],0)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_2)) * absoluteTransitW[2];
@@ -929,6 +1142,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],1)) * absoluteAmenW[27]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],1)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_3)) * absoluteTransitW[2];
@@ -936,6 +1151,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],2)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],2)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_4)) * absoluteTransitW[2];
@@ -943,6 +1160,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],3)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],3)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_5)) * absoluteTransitW[2];
@@ -950,6 +1169,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],4)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],4)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_1)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_1)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_1)) * absoluteTransitW[2];
@@ -957,6 +1178,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],5)) * absoluteAmenW[27]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],5)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_2)) * absoluteTransitW[2];
@@ -964,6 +1187,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],6)) * absoluteAmenW[27]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],6)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_3)) * absoluteTransitW[2];
@@ -971,6 +1196,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],7)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],7)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_4)) * absoluteTransitW[2];
@@ -978,6 +1205,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],8)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],8)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_restaurant_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_restaurant_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_restaurant_5)) * absoluteTransitW[2];
@@ -985,6 +1214,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[27],9)) * absoluteAmenW[27];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[27],9)) * absoluteAmenW[27];
+      scoreBM += aggScoreBM;
 
       //ADDING SCHOOLS 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_1)) * absoluteTransitW[0];
@@ -994,6 +1225,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[28],0)) * absoluteAmenW[28]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[28],0)) * absoluteAmenW[28];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_school_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_school_2)) * absoluteTransitW[2];
@@ -1001,6 +1234,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[28],1)) * absoluteAmenW[28]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[28],1)) * absoluteAmenW[28];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_school_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_school_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_school_3)) * absoluteTransitW[2];
@@ -1008,6 +1243,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[28],2)) * absoluteAmenW[28];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[28],2)) * absoluteAmenW[28];
+      scoreBM += aggScoreBM;
 
       //ADDING SHOE STORE 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_1)) * absoluteTransitW[0];
@@ -1017,6 +1254,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[29],0)) * absoluteAmenW[29]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[29],0)) * absoluteAmenW[29];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shoe_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shoe_store_2)) * absoluteTransitW[2];
@@ -1024,6 +1263,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[29],1)) * absoluteAmenW[29]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[29],1)) * absoluteAmenW[29];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shoe_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shoe_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shoe_store_3)) * absoluteTransitW[2];
@@ -1031,6 +1272,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[29],2)) * absoluteAmenW[29];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[29],2)) * absoluteAmenW[29];
+      scoreBM += aggScoreBM;
 
       //ADDING SHOPPING MALL 3
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_1)) * absoluteTransitW[0];
@@ -1040,6 +1283,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[30],0)) * absoluteAmenW[30]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[30],0)) * absoluteAmenW[30];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shopping_mall_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shopping_mall_2)) * absoluteTransitW[2];
@@ -1047,6 +1292,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[30],1)) * absoluteAmenW[30]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[30],1)) * absoluteAmenW[30];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_shopping_mall_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_shopping_mall_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_shopping_mall_3)) * absoluteTransitW[2];
@@ -1054,6 +1301,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[30],2)) * absoluteAmenW[30];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[30],2)) * absoluteAmenW[30];
+      scoreBM += aggScoreBM;
 
       //ADDING STORE 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_1)) * absoluteTransitW[0];
@@ -1063,6 +1312,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[31],0)) * absoluteAmenW[31]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[31],0)) * absoluteAmenW[31];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_2)) * absoluteTransitW[2];
@@ -1070,6 +1321,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[31],1)) * absoluteAmenW[31]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[31],1)) * absoluteAmenW[31];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_3)) * absoluteTransitW[2];
@@ -1077,6 +1330,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[31],2)) * absoluteAmenW[31];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[31],2)) * absoluteAmenW[31];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_4)) * absoluteTransitW[2];
@@ -1084,6 +1339,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[31],3)) * absoluteAmenW[31];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[31],3)) * absoluteAmenW[31];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_store_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_store_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_store_5)) * absoluteTransitW[2];
@@ -1091,6 +1348,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[31],4)) * absoluteAmenW[31];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[31],4)) * absoluteAmenW[31];
+      scoreBM += aggScoreBM;
 
       //ADDING SUPERMARKET 5
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_1)) * absoluteTransitW[0];
@@ -1100,6 +1359,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[32],0)) * absoluteAmenW[32]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[32],0)) * absoluteAmenW[32];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_2)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_2)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_2)) * absoluteTransitW[2];
@@ -1107,6 +1368,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[32],1)) * absoluteAmenW[32]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[32],1)) * absoluteAmenW[32];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_3)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_3)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_3)) * absoluteTransitW[2];
@@ -1114,6 +1377,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[32],2)) * absoluteAmenW[32];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[32],2)) * absoluteAmenW[32];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_4)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_4)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_4)) * absoluteTransitW[2];
@@ -1121,6 +1386,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[32],3)) * absoluteAmenW[32];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[32],3)) * absoluteAmenW[32];
+      scoreBM += aggScoreBM;
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_supermarket_5)) * absoluteTransitW[0];
       bikeScore = (Math.exp(marginalTransitW[1]*distances[i].bicycling_supermarket_5)) * absoluteTransitW[1];
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_supermarket_5)) * absoluteTransitW[2];
@@ -1128,6 +1395,8 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[32],4)) * absoluteAmenW[32];
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[32],4)) * absoluteAmenW[32];
+      scoreBM += aggScoreBM;
 
       //ADDING TRAIN STATION 1
       walkScore = (Math.exp(marginalTransitW[0]*distances[i].walking_train_station_1)) * absoluteTransitW[0];
@@ -1137,16 +1406,21 @@ function onEachFeature(feature, layer) {
       aggScore = walkScore + bikeScore + transitScore + driveScore;
       aggScore = (aggScore * Math.pow(marginalAmenW[33],0)) * absoluteAmenW[33]
       score += aggScore;
+      aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[33],0)) * absoluteAmenW[33];
+      scoreBM += aggScoreBM;
     };
   };
   for(var i=0; i<pop.length; i++){
    if(pop[i].bg === bg){
      scores_AVG = scores_AVG + (score*pop[i].pop);
+     scores_AVGBM = scores_AVGBM + (scoreBM*pop[i].pop);
+
    }
   };
  for(var i=0; i<sspzPop.length; i++){
   if(sspzPop[i].bg === bg){
     sspzScores_AVG = sspzScores_AVG + (score*parseInt(sspzPop[i].popratio));
+    sspzScores_AVGBM = sspzScores_AVGBM + (scoreBM*parseInt(sspzPop[i].popratio));
     }
   };
   layer.feature.properties.score = score;
@@ -1368,6 +1642,8 @@ function updateMap() {
   sspz_scores = [];
   scores_AVG = 0;
   sspzScores_AVG = 0;
+  scores_AVGBM = 0;
+  sspzScores_AVGBM = 0;
   var features = blockGroups.features
   var FC = {
     type: 'FeatureCollection',
@@ -1386,17 +1662,16 @@ function updateMap() {
   }, 0);
   var avg = sum / scores.length;
   var avgSSPZ = sumSSPZ / sspz_scores.length;
-  console.log(sspzScores_AVG);
-  console.log(scores_AVG);
-  console.log(popSSPZ);
-  console.log(popTotal);
   sspzScores_AVG = sspzScores_AVG/popSSPZ;
   scores_AVG = scores_AVG/popTotal;
-  console.log(sspzScores_AVG);
-  console.log(scores_AVG);
+  sspzScores_AVGBM = sspzScores_AVGBM/popSSPZ;
+  scores_AVGBM = scores_AVGBM/popTotal;
+  console.log(sspzScores_AVGBM);
+  console.log(scores_AVGBM);
   std = standardDeviation(scores);
   document.getElementById("stocktonAVG").textContent=parseInt(scores_AVG);
   document.getElementById("sspzAVG").textContent=parseInt(sspzScores_AVG);
+  document.getElementById("benchmark").textContent=parseInt(scores_AVGBM);
   function getColor(d) {
     return d > (avg + 2*std) ? '#4FDE02' :
         d > (avg + std) ? '#A0EB15' :
