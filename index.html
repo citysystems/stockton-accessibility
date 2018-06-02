@@ -26,6 +26,7 @@
     <div class='container-fluid'>
       <div id='weightMap' class="row">
         <div class="col-md-5" style="padding:20px; width:100%; height: 550px; overflow: scroll;">
+          <!-- WHERE INPUTS ARE ADDED -->
           <h4><b>Accessibility Weighting</b><br><br></h4>
           <div class="row">
             <div class="col-md-4" style="padding:0px; width:100%;">
@@ -413,6 +414,7 @@
             </div>
           </div>
           <br>
+          <!-- NOW FOR TRANSIT MODES -->
           <div class="row">
             <div class="col-md-4">
               <b>Transit Modes</b>
@@ -470,9 +472,11 @@
           </div>
         </div>
         <div class="col-md-7" style="width:100%">
+          <!-- ADD MAP -->
           <div class='row' style="height:450px">
             <div id='my-map' style="height:450px"></div>
           </div>
+          <!-- ADD SUMMARY STATS -->
           <div class='row'>
             <div class='col-md-6'><br>Population Normalized Accessibility Score, Stockton: <span id="stocktonAVG"> 0 </span></div>
             <div class='col-md-6'><br>Population Normalized Accessibility Score, South Stockton Promise Zone: <span id="sspzAVG"> 0 </span></div>
@@ -480,30 +484,6 @@
           <div class='row'>
             <div class='col-md-12' style = "text-align: center;vertical-align: middle;" data-toggle="tooltip" data-placement="top" title="This is the score a neighborhood would receive if it had a desired density of all desired amenity types within reasonable length of travel using all desired modes."><br>Accessibility Benchmark: <span id="benchmark"> 0 </span></div>
           </div>
-      </div>
-      <div class='row' >
-        <div class="col-xs-6 col-md-12" style="padding:0; width:100%;">
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="modal fade" id="creditsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">About this project</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          City Systems bio, credits to us + to our partners</a>.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
       </div>
     </div>
   </div>

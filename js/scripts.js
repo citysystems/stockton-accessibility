@@ -1,11 +1,13 @@
-distances//Initialize tooltips
+//Initialize tooltips
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
+
 //Create the map variable
 var map = L.map('my-map', {
     scrollWheelZoom: false
 }).setView([37.938241, -121.279106], 11);
+
 //Add the basemap
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
@@ -13,61 +15,67 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x
 	maxZoom: 19
 }).addTo(map);
 
+
+//Function to define colors for different amenities - all same color for now
 function getColorAmen(d) {
   switch (d) {
     case 'bakery':
-      return '';
+      return '#900C3F';
     case 'beauty_salon':
-      return '';
+      return '#900C3F';
     case 'book_store':
-      return '';
+      return '#900C3F';
     case 'cafe':
-      return '';
+      return '#900C3F';
     case 'clothing_store':
-      return '';
+      return '#900C3F';
     case 'convenience_store':
-      return '';
+      return '#900C3F';
     case 'department_store':
-      return '';
-    case 'doctor':
-      return '';
+      return '#900C3F';
+    case 'doctor':gym
+      return '#900C3F';
     case 'florist':
-      return '';
+      return '#900C3F';
     case 'gym':
-      return '';
+      return '#900C3F';
     case 'hardware_store':
-      return '';
+      return '#900C3F';
     case 'laundry':
-      return '';
+      return '#900C3F';
     case 'meal_takeaway':
-      return '';
+      return '#900C3F';
     case 'pet_store':
-      return '';
+      return '#900C3F';
     case 'shoe_store':
-      return '#57db6c';
+      return '#900C3F';
     case 'shopping_mall':
-      return '';
+      return '#900C3F';
     case 'pharmacy':
-      return '#db5f57';
+      return '#900C3F';
     case 'bank':
-      return '#dbd657';
+      return '#900C3F';
     case 'supermarket':
-      return '#c957db';
+      return '#900C3F';
     case 'restaurant':
-      return '#db5777';
+      return '#900C3F';
     default:
-      return 'black';
-    }
-  };
-scores = [];
-sspz_scores = [];
-scores_AVG = 0;
-sspzScores_AVG = 0;
-scores_AVGBM = 0;
-sspzScores_AVGBM = 0;
+      return '#900C3F';
+  }
+};
+
+//Initialize some variables
+scores = []; //array of scores
+sspz_scores = []; //array of scores in the promise zone
+scores_AVG = 0; //averaged score
+sspzScores_AVG = 0; //averaged score for sspz
+scores_AVGBM = 0; //averaged score if distances were ideal
+sspzScores_AVGBM = 0; //averaged score for SSPZ if distances were ideal
 benchmark = 0;
 maxScore = 0;
 minScore = 0;
+
+//Calculating population size
 popTotal = 0;
 popSSPZ = 0;
 for(var i=0; i<pop.length; i++){
@@ -76,8 +84,10 @@ for(var i=0; i<pop.length; i++){
 for(var i=0; i<sspzPop.length; i++){
   popSSPZ = popSSPZ + parseInt(sspzPop[i].popratio);
 };
+
+//The big function to calculate accessibility scores, called for each tract
 function onEachFeature(feature, layer) {
-  //Get buttons
+  //Get values from inputs
   var absoluteAmenW = [$("#atmVal"),$("#bakeryVal"),$("#bankVal"), $("#beautySalonVal"), $("#bookStoreVal"),
     $("#busStationVal"),$("#cafeVal"), $("#clothingStoreVal"), $("#convenienceStoreVal"),
     $("#dentistVal"), $("#departmentStoreVal"), $("#doctorVal"), $("#electronicsVal"),$("#floristVal"),
@@ -93,6 +103,8 @@ function onEachFeature(feature, layer) {
       $("#restaurantMVal"),$("#schoolMVal"), $("#shoeStoreMVal"), $("#shoppingMallMVal"), $("#storeMVal"),$("#supermarketMVal"), $("#trainStationMVal")];
   var absoluteTransitW = [$("#walkVal"), $("#bikeVal"), $("#transitVal"), $("#driveVal")];
   var marginalTransitW = [$("#walkMVal"), $("#bikeMVal"), $("#transitMVal"), $("#driveMVal")];
+
+  //check if values are in the right range
   for (var i = 0; i < absoluteAmenW.length; i++) {
     absoluteAmenW[i].val(parseInt(absoluteAmenW[i].val()));
       if (absoluteAmenW[i].val() > 10 ) {
@@ -137,6 +149,8 @@ function onEachFeature(feature, layer) {
           marginalTransitW[i].val(1);
       };
     };
+
+  //making weightings into integers and calculating the proper weighting scheme
   var absoluteAmenW = [parseInt($("#atmVal").val()),parseInt($("#bakeryVal").val()),parseInt($("#bankVal").val()), parseInt($("#beautySalonVal").val()), parseInt($("#bookStoreVal").val()),
     parseInt($("#busStationVal").val()),parseInt($("#cafeVal").val()), parseInt($("#clothingStoreVal").val()), parseInt($("#convenienceStoreVal").val()), parseInt($("#dentistVal").val()), parseInt($("#departmentStoreVal").val()), parseInt($("#doctorVal").val()),
     parseInt($("#electronicsVal").val()),parseInt($("#floristVal").val()),
@@ -157,12 +171,16 @@ function onEachFeature(feature, layer) {
   //marginal transit calc: -ln0.1/t(minutes)
   var marginalTransitW = [((Math.log(0.1))/($("#walkMVal").val())), ((Math.log(0.1))/($("#bikeMVal").val())), ((Math.log(0.1))/($("#transitMVal").val())),
   ((Math.log(0.1))/($("#transitMVal").val()))];
+  //ID to use when running through the distance matrix
   bg = layer.feature.properties.bg;
+  //Initiatilizing individual score per bg/feature/layer
   score = 0;
   scoreBM = 0;
   //marginal good implementation = total transit score * MarginalAmenW(given type)^"rank"
   //util per transit: exp(marginal weighting * actual travel time)
   //marginal score per transit type, scale each according to absolute weights, sum together, marginal good weighting, scale by the absolute good weighting, add together
+
+  //for loop for each record in the distance matrix
   for (var i = 0; i < distances.length; i++) {
     walkScore = 0;
     bikeScore = 0;
@@ -172,6 +190,8 @@ function onEachFeature(feature, layer) {
     bikeScoreBM = 0;
     transitScoreBM = 0;
     driveScoreBM = 0;
+
+    //Calculating the ideal agg benchmark score (before applying service weightings)
     walkScoreBM = (Math.exp(marginalTransitW[0]*$("#walkMVal").val())) * absoluteTransitW[0];
     bikeScoreBM = (Math.exp(marginalTransitW[1]*$("#bikeMVal").val())) * absoluteTransitW[1];
     transitScoreBM = (Math.exp(marginalTransitW[2]*$("#transitMVal").val())) * absoluteTransitW[2];
@@ -213,7 +233,7 @@ function onEachFeature(feature, layer) {
       transitScore = (Math.exp(marginalTransitW[2]*distances[i].transit_bakery_1)) * absoluteTransitW[2];
       driveScore = (Math.exp(marginalTransitW[3]*distances[i].driving_bakery_1)) * absoluteTransitW[3];
       aggScore = walkScore + bikeScore + transitScore + driveScore;
-      aggScore = (aggScore * Math.pow(marginalAmenW[1],0)) * absoluteAmenW[1]
+      aggScore = (aggScore * Math.pow(marginalAmenW[1],0)) * absoluteAmenW[1];
       score += aggScore;
       aggScoreBM = (aggScoreBMConstant * Math.pow(marginalAmenW[1],0)) * absoluteAmenW[1];
       scoreBM += aggScoreBM;
@@ -1410,6 +1430,8 @@ function onEachFeature(feature, layer) {
       scoreBM += aggScoreBM;
     };
   };
+
+  //Averaging scores
   for(var i=0; i<pop.length; i++){
    if(pop[i].bg === bg){
      scores_AVG = scores_AVG + (score*pop[i].pop);
@@ -1423,6 +1445,8 @@ function onEachFeature(feature, layer) {
     sspzScores_AVGBM = sspzScores_AVGBM + (scoreBM*parseInt(sspzPop[i].popratio));
     }
   };
+
+  //Assigning score to the layer, creating popup and styling
   layer.feature.properties.score = score;
   if (layer.feature.properties && layer.feature.properties.score) {
       layer.bindPopup("Accessibility Score: " + layer.feature.properties.score);
@@ -1437,12 +1461,15 @@ function onEachFeature(feature, layer) {
       fillOpacity: 0.8
   });
 
+  //Updating max and min score
   if (score > maxScore) {
     maxScore = score;
   };
   if (score < minScore) {
     minScore = score;
   };
+
+  //Adding score to the array of scores
   scores.push(score);
   for(var i=0; i<sspz_BGs.length; i++){
    if(sspz_BGs[i] === bg){
@@ -1451,76 +1478,289 @@ function onEachFeature(feature, layer) {
   }
 };
 
-// var store = L.geoJson(amenities, {
-//   filter: function(feature, layer) {
-//     return (feature.properties.type === "store");
-//   },
-//     pointToLayer: function(feature, latlng) {
-//         return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85, color: getColorAmen(feature.properties.type)});
-//     },
-//     onEachFeature: function (feature, layer) {
-//         layer.bindPopup(
-//             feature.properties.name
-//         )
-//         }
-//   });
-//
-// var pharmacy = L.geoJson(amenities, {
-//   filter: function(feature, layer) {
-//     return (feature.properties.type === "pharmacy");
-//   },
-//     pointToLayer: function(feature, latlng) {
-//         return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85, color: getColorAmen(feature.properties.type)});
-//     },
-//     onEachFeature: function (feature, layer) {
-//         layer.bindPopup(
-//             feature.properties.name
-//         )
-//         }
-//   });
-//
-// var bank = L.geoJson(amenities, {
-//   filter: function(feature, layer) {
-//     return (feature.properties.type === "bank");
-//   },
-//     pointToLayer: function(feature, latlng) {
-//         return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85, color: getColorAmen(feature.properties.type)});
-//     },
-//     onEachFeature: function (feature, layer) {
-//         layer.bindPopup(
-//             feature.properties.name
-//         )
-//         }
-//   });
-//
-// var supermarket = L.geoJson(amenities, {
-//   filter: function(feature, layer) {
-//     return (feature.properties.type === "supermarket");
-//   },
-//     pointToLayer: function(feature, latlng) {
-//         return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85, color: getColorAmen(feature.properties.type)});
-//     },
-//     onEachFeature: function (feature, layer) {
-//         layer.bindPopup(
-//             feature.properties.name
-//         )
-//         }
-//   });
-//
-// var restaurant = L.geoJson(amenities, {
-//   filter: function(feature, layer) {
-//     return (feature.properties.type === "restaurant");
-//   },
-//     pointToLayer: function(feature, latlng) {
-//         return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85, color: getColorAmen(feature.properties.type)});
-//     },
-//     onEachFeature: function (feature, layer) {
-//         layer.bindPopup(
-//             feature.properties.name
-//         )
-//         }
-//   });
+//Creating Layers of Amenities
+var bakery = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "bakery");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
 
+var bank = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "bank");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var beauty_salon = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "beauty_salon");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var book_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "book_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+
+var cafe = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "cafe");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var clothing_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "clothing_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var convenience_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "convenience_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var department_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "department_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var doctor = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "doctor");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var florist = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "florist");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var gym = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "gym");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var hardware_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "hardware_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var laundry = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "laundry");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var restaurant = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "restaurant");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var meal_takeaway = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "meal_takeaway");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var pet_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "pet_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var pharmacy = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "pharmacy");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var shoe_store = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "shoe_store");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var shopping_mall = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "shopping_mall");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+var supermarket = L.geoJson(amenities, {
+  filter: function(feature, layer) {
+    return (feature.properties.Description === "supermarket");
+  },
+    pointToLayer: function(feature, latlng) {
+        return new L.CircleMarker(latlng, {radius: 5, fillOpacity: 0.65, color: getColorAmen(feature.properties.Description)});
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup(
+            feature.properties.Name
+        )
+        }
+});
+
+//Adding Prelim Legend (numbers updated each updateMap call below)
 var legend = L.control({
     position: 'topright'
 });
@@ -1550,7 +1790,7 @@ legend.onAdd = function(map) {
 
 legend.addTo(map);
 
-
+//SECOND LEGEND - WHEN NUMBER OF AMENITY TYPES WERE SMALLER
 // var legend1 = L.control({
 //     position: 'bottomleft'
 // });
@@ -1574,6 +1814,8 @@ legend.addTo(map);
 // legend1.addTo(map);
 //
 //
+
+//Outline of the promise zone
 var sspz = L.geoJSON(sspz, {
   style: {
         fillColor: "grey",
@@ -1584,17 +1826,26 @@ var sspz = L.geoJSON(sspz, {
         fillOpacity: .3,
 
     },
-  // onEachFeature: onEachFeature,
 });
 
-// sspz.addTo(map);
-
+//Create a variable to create an overlay tab of the sspz and all the amenities
 var overlays = {
-    "South Stockton Promise Zone" : sspz
+    "South Stockton Promise Zone" : sspz,
+    "Bakery" : bakery, "Bank" : bank, "Beauty Salon" : beauty_salon,
+    "Book Store": book_store, "Cafe": cafe, "Clothing Store": clothing_store,
+    "Convenience Store": convenience_store,
+    "Department Store" : department_store, "Doctor" : doctor, "Florist": florist,
+    "Gym" : gym, "Hardware Store": hardware_store, "Laundry": laundry,"Restaurant": restaurant,
+    "Takeout Restaurant" : meal_takeaway,"Pet Store": pet_store,
+    "Pharmacy": pharmacy, "Shoe Store": shoe_store, "Shopping Mall" : shopping_mall,
+    "Supermarket" : supermarket,
 		};
 
+//add the overlay lay to the map
 L.control.layers(null, overlays).addTo(map);
 
+
+//First creation of layer w/ accessibility score
 var filteredLayer = L.geoJSON(blockGroups, {
   style: {
         fillColor: "black",
@@ -1608,6 +1859,8 @@ var filteredLayer = L.geoJSON(blockGroups, {
 });
 filteredLayer.addTo(map);
 
+
+//functions to calc avg and std
 function average(data){
   var sum = data.reduce(function(sum, value){
     return sum + value;
@@ -1635,6 +1888,8 @@ function standardDeviation(values){
   return stdDev;
 };
 
+
+//function to be called whenever any inputs change - resets scores and creates new layers
 function updateMap() {
   maxScore = 0;
   minScore = 0;
@@ -1666,8 +1921,6 @@ function updateMap() {
   scores_AVG = scores_AVG/popTotal;
   sspzScores_AVGBM = sspzScores_AVGBM/popSSPZ;
   scores_AVGBM = scores_AVGBM/popTotal;
-  console.log(sspzScores_AVGBM);
-  console.log(scores_AVGBM);
   std = standardDeviation(scores);
   document.getElementById("stocktonAVG").textContent=parseInt(scores_AVG);
   document.getElementById("sspzAVG").textContent=parseInt(sspzScores_AVG);
@@ -1692,22 +1945,7 @@ function updateMap() {
       fillOpacity: 0.4
     });
   });
-  // filteredLayer = L.geoJSON(FC, {
-  //   onEachFeature: onEachFeature,
-  // });
-  // filteredLayer.setStyle({
-  //   fillColor: getColor(filteredLayer.feature.properties.score),
-  //   weight: 1,
-  //   // dashArray: '3 10',
-  //   // opacity: 0,
-  //   color: "black",
-  //   // dashArray: '3',
-  //   fillOpacity: 0.75
-  // });
-  // console.log(maxScore);
-  // console.log(minScore);
   filteredLayer.addTo(map);
 };
 //first map populated!
 updateMap();
-// console.log(filteredLayer);
